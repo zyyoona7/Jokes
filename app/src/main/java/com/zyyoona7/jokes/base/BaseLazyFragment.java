@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,28 +13,32 @@ import android.view.ViewGroup;
 
 import com.zyyoona7.jokes.widget.loading.VaryViewHelperController;
 
+import java.lang.reflect.Field;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.yokeyword.fragmentation.SupportFragment;
 
 /**
- * Created by zyyoona7 on 2016/6/28.
+ * Author:  Tau.Chen
+ * Email:   1076559197@qq.com | tauchen1990@gmail.com
+ * Date:    2015/4/13.
+ * Description:
  */
+public abstract class BaseLazyFragment extends SupportFragment {
 
-public abstract class BaseFragment extends SupportFragment {
 
-    //Unbinder对象，用来解绑ButterKnife
-    private Unbinder mUnbinder;
+    private boolean isFirstResume = true;
+    private boolean isFirstVisible = true;
+    private boolean isFirstInvisible = true;
+    private boolean isPrepared;
 
     private VaryViewHelperController mVaryViewHelperController = null;
 
+    //Unbinder对象管理ButterKnife
+    private Unbinder mUnbinder;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (getContentViewID() != 0) {
@@ -43,45 +48,140 @@ public abstract class BaseFragment extends SupportFragment {
         }
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mUnbinder = ButterKnife.bind(this, view);
+
         if (null != getLoadingTargetView()) {
             mVaryViewHelperController = new VaryViewHelperController(getLoadingTargetView());
         }
-        initViewAndEvents(view);
+
+        initViewsAndEvents(view);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (mUnbinder != null) {
-            //取消绑定ButterKnife
             mUnbinder.unbind();
         }
     }
 
-    /**
-     * override this method to return content view id of the fragment
-     *
-     * @return
-     */
-    protected abstract int getContentViewID();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        // for bug ---> java.lang.IllegalStateException: Activity has been destroyed
+        try {
+            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initPrepare();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isFirstResume) {
+            isFirstResume = false;
+            return;
+        }
+        if (getUserVisibleHint()) {
+            onUserVisible();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getUserVisibleHint()) {
+            onUserInvisible();
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            if (isFirstVisible) {
+                isFirstVisible = false;
+                initPrepare();
+            } else {
+                onUserVisible();
+            }
+        } else {
+            if (isFirstInvisible) {
+                isFirstInvisible = false;
+                onFirstUserInvisible();
+            } else {
+                onUserInvisible();
+            }
+        }
+    }
+
+    private synchronized void initPrepare() {
+        if (isPrepared) {
+            onFirstUserVisible();
+        } else {
+            isPrepared = true;
+        }
+    }
 
     /**
-     * override this method to do operation in the fragment
-     * 设置监听器
-     *
-     * @param view
+     * when fragment is visible for the first time, here we can do some initialized work or refresh data only once
      */
-    protected abstract void initViewAndEvents(View view);
+    protected abstract void onFirstUserVisible();
+
+    /**
+     * this method like the fragment's lifecycle method onResume()
+     */
+    protected abstract void onUserVisible();
+
+    /**
+     * when fragment is invisible for the first time
+     */
+    private void onFirstUserInvisible() {
+        // here we do not recommend do something
+    }
+
+    /**
+     * this method like the fragment's lifecycle method onPause()
+     */
+    protected abstract void onUserInvisible();
 
     /**
      * get loading target view
      */
     protected abstract View getLoadingTargetView();
+
+    /**
+     * init all views and add events
+     */
+    protected abstract void initViewsAndEvents(View view);
+
+    /**
+     * bind layout resource file
+     *
+     * @return id of layout resource
+     */
+    protected abstract int getContentViewID();
 
 
     /**

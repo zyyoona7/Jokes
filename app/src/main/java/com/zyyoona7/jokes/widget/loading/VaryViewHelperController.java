@@ -37,7 +37,7 @@ public class VaryViewHelperController {
     }
 
     public void showNetworkError(View.OnClickListener onClickListener) {
-        View layout = helper.inflate(R.layout.message);
+        View layout = helper.inflate(R.layout.vary_view_message);
         TextView textView = (TextView) layout.findViewById(R.id.message_info);
         textView.setText(helper.getContext().getResources().getString(R.string.common_no_network_msg));
 
@@ -52,7 +52,7 @@ public class VaryViewHelperController {
     }
 
     public void showError(String errorMsg, View.OnClickListener onClickListener) {
-        View layout = helper.inflate(R.layout.message);
+        View layout = helper.inflate(R.layout.vary_view_message);
         TextView textView = (TextView) layout.findViewById(R.id.message_info);
         if (!TextUtils.isEmpty(errorMsg)) {
             textView.setText(errorMsg);
@@ -71,7 +71,7 @@ public class VaryViewHelperController {
     }
 
     public void showEmpty(String emptyMsg, View.OnClickListener onClickListener) {
-        View layout = helper.inflate(R.layout.message);
+        View layout = helper.inflate(R.layout.vary_view_message);
         TextView textView = (TextView) layout.findViewById(R.id.message_info);
         if (!TextUtils.isEmpty(emptyMsg)) {
             textView.setText(emptyMsg);
@@ -90,7 +90,7 @@ public class VaryViewHelperController {
     }
 
     public void showLoading(String msg) {
-        View layout = helper.inflate(R.layout.loading);
+        View layout = helper.inflate(R.layout.vary_view_loading);
         if (!TextUtils.isEmpty(msg)) {
             TextView textView = (TextView) layout.findViewById(R.id.loading_msg);
             textView.setText(msg);

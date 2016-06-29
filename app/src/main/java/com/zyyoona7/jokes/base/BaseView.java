@@ -4,36 +4,35 @@ package com.zyyoona7.jokes.base;
  * Created by zyyoona7 on 2016/6/28.
  */
 
-public interface BaseView<T extends BasePresenter> {
+public interface BaseView {
 
     /**
-     * 绑定presenter
-     * @param presenter
-     */
-    void setPresenter(T presenter);
-
-    /**
-     * 显示加载进度条
+     * 切换loading页面
+     * @param toggle true 切换 false 还原
      * @param msg
      */
-    void showProgress(String msg);
+    void toggleShowLoading(boolean toggle, String msg);
 
     /**
-     * 显示无数据页面
+     * 切换无数据页面
+     *
+     * @param toggle true 切换 false 还原
      * @param msg
      */
-    void showEmpty(String msg);
+    void toggleShowEmpty(boolean toggle, String msg);
 
     /**
-     * 显示错误页面
+     * 切换错误页面
+     *
+     * @param toggle true 切换 false 还原
      * @param msg
      */
-    void showError(String msg);
+    void toggleShowError(boolean toggle, String msg);
 
     /**
-     * 显示正常内容
+     * 显示通知
+     * @param msg
      */
-    void showContent();
-
+    void showToast(String msg);
 
 }
