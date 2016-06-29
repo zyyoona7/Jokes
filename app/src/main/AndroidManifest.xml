@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zyyoona7.jokes">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <meta-data
+        android:name="com.zyyoona7.jokes.base.GlideConfiguration"
+        android:value="GlideModule" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".app.JokesApp"

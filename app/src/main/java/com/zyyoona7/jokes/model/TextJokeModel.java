@@ -28,7 +28,7 @@ public class TextJokeModel {
      * @return
      */
     public Observable<List<TextJoke>> getNewestTextJoke(int page) {
-        return JokeService.getJokesApi().getNewstTextJoke(Constants.APPKEY, page, 20)
+        return JokeService.getJokesApi().getNewstTextJoke(Constants.APP_KEY, page, 20)
                 .map(new Func1<Result<List<TextJoke>>, List<TextJoke>>() {
                     @Override
                     public List<TextJoke> call(Result<List<TextJoke>> listResult) {
@@ -46,7 +46,7 @@ public class TextJokeModel {
      * @return
      */
     public Observable<List<TextJoke>> getTextJokeByTime(int page, String time) {
-        return JokeService.getJokesApi().getTextJokeByTime(Constants.APPKEY, page, 20, Constants.DESC, time)
+        return JokeService.getJokesApi().getTextJokeByTime(Constants.APP_KEY, page, 20, Constants.DESC, time)
                 .map(new Func1<Result<List<TextJoke>>, List<TextJoke>>() {
                     @Override
                     public List<TextJoke> call(Result<List<TextJoke>> listResult) {

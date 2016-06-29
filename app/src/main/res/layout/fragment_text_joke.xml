@@ -12,7 +12,8 @@
         app:stl_underlineThickness="0dp"
         app:stl_indicatorThickness="2dp"
         app:stl_dividerColor="#4D000000"
-        app:stl_defaultTabTextAllCaps="true">
+        app:stl_defaultTabTextColor="@drawable/selector_stl_text"
+        app:stl_defaultTabTextAllCaps="false">
 
     </com.ogaclejapan.smarttablayout.SmartTabLayout>
 

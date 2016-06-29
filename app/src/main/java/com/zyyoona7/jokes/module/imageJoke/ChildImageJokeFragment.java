@@ -8,7 +8,7 @@ import com.zyyoona7.jokes.R;
 import com.zyyoona7.jokes.base.BaseLazyFragment;
 
 /**
- * Created by User on 2016/6/29.
+ * Created by zyyoona7 on 2016/6/29.
  */
 
 public class ChildImageJokeFragment extends BaseLazyFragment {

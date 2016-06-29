@@ -14,7 +14,7 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * Created by User on 2016/6/29.
+ * Created by zyyoona7 on 2016/6/29.
  */
 
 public class ImageJokeFragment extends BaseFragment {
