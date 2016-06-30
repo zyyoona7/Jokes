@@ -22,12 +22,7 @@ import butterknife.BindView;
  * Created by zyyoona7 on 2016/6/29.
  */
 
-public class ChildTextJokeFragment extends BaseLazyFragment implements ChildTextJokeContract.View,SwipeRefreshLayout.OnRefreshListener,BaseQuickAdapter.RequestLoadMoreListener{
-
-    private static final int NEWST = 1;
-    private static final int DAY = 2;
-    private static final int WEEK = 3;
-    private static final int MONTH = 4;
+public class ChildTextJokeFragment extends BaseLazyFragment implements ChildTextJokeContract.View, SwipeRefreshLayout.OnRefreshListener, BaseQuickAdapter.RequestLoadMoreListener {
 
     private int mType = 1;
 
@@ -55,7 +50,7 @@ public class ChildTextJokeFragment extends BaseLazyFragment implements ChildText
         if (getArguments() != null) {
             mType = getArguments().getInt("type");
         }
-        mPresenter=new ChildTextJokePresenter();
+        mPresenter = new ChildTextJokePresenter();
     }
 
     @Override
@@ -93,11 +88,11 @@ public class ChildTextJokeFragment extends BaseLazyFragment implements ChildText
     @Override
     protected void initViewsAndEvents(View view) {
         mRvTextJoke.setHasFixedSize(true);
-        mRvTextJoke.setLayoutManager(new LinearLayoutManager(_mActivity,LinearLayoutManager.VERTICAL,false));
-        mAdapter=new TextJokeRvAdapter();
+        mRvTextJoke.setLayoutManager(new LinearLayoutManager(_mActivity, LinearLayoutManager.VERTICAL, false));
+        mAdapter = new TextJokeRvAdapter();
         mRvTextJoke.setAdapter(mAdapter);
         mAdapter.setOnLoadMoreListener(this);
-        mAdapter.openLoadMore(Constants.PAGE_SIZE,true);
+        mAdapter.openLoadMore(Constants.PAGE_SIZE, true);
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
@@ -119,21 +114,21 @@ public class ChildTextJokeFragment extends BaseLazyFragment implements ChildText
 
     @Override
     public void loadMoreData(List<TextJoke> data) {
-        if(data.size()>0) {
+        if (data.size() > 0) {
             mAdapter.notifyDataChangedAfterLoadMore(data, true);
-        }else {
+        } else {
             mAdapter.notifyDataChangedAfterLoadMore(false);
         }
     }
 
     @Override
     public void ShowLoading(boolean toggle, String msg) {
-        toggleShowLoading(toggle,msg);
+        toggleShowLoading(toggle, msg);
     }
 
     @Override
     public void ShowEmpty(boolean toggle, String msg) {
-        toggleShowEmpty(toggle,msg,null);
+        toggleShowEmpty(toggle, msg, null);
     }
 
     @Override

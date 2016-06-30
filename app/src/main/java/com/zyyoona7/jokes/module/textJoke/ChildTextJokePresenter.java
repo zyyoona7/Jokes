@@ -3,6 +3,7 @@ package com.zyyoona7.jokes.module.textJoke;
 import com.zyyoona7.jokes.model.TextJokeModel;
 import com.zyyoona7.jokes.model.bean.TextJoke;
 import com.zyyoona7.jokes.utils.RxManager;
+import com.zyyoona7.jokes.utils.TimeUtils;
 
 import java.util.List;
 
@@ -15,10 +16,11 @@ import rx.functions.Action1;
  */
 
 public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
-    private static final int NEWST = 1;
+    private static final int NEWEST = 1;
     private static final int DAY = 2;
     private static final int WEEK = 3;
     private static final int MONTH = 4;
+
 
     private ChildTextJokeContract.View mView;
     private RxManager mRxManager = new RxManager();
@@ -28,7 +30,7 @@ public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
 
     private boolean isFirstIn = true;
 
-    private int currentPage=1;
+    private int currentPage = 1;
 
     public ChildTextJokePresenter() {
         this.mModel = new TextJokeModel();
@@ -37,15 +39,47 @@ public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
     @Override
     public void refresh(int type) {
         isRefresh = true;
-        currentPage=1;
-        getNewestTextJoke(currentPage);
+        currentPage = 1;
+        switch (type) {
+            case NEWEST:
+                //最新
+                getNewestTextJoke(currentPage);
+                break;
+            case DAY:
+                //一天前
+                getTextJokeByTime(currentPage, TimeUtils.getTodayZero());
+                break;
+            case WEEK:
+                //一周前
+                getTextJokeByTime(currentPage, TimeUtils.getWeekZero());
+                break;
+            case MONTH:
+                //一个月前
+                getTextJokeByTime(currentPage, TimeUtils.getMonthZero());
+        }
     }
 
     @Override
     public void loadMore(int type) {
         isRefresh = false;
         currentPage++;
-        getNewestTextJoke(currentPage);
+        switch (type) {
+            case NEWEST:
+                //最新
+                getNewestTextJoke(currentPage);
+                break;
+            case DAY:
+                //一天前
+                getTextJokeByTime(currentPage, TimeUtils.getTodayZero());
+                break;
+            case WEEK:
+                //一周前
+                getTextJokeByTime(currentPage, TimeUtils.getWeekZero());
+                break;
+            case MONTH:
+                //一个月前
+                getTextJokeByTime(currentPage, TimeUtils.getMonthZero());
+        }
     }
 
     @Override
@@ -63,6 +97,10 @@ public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
         mRxManager.addSubscription(subscription);
     }
 
+    /**
+     * 获取最新的TextJoke
+     * @param page
+     */
     public void getNewestTextJoke(int page) {
         if (isFirstIn) {
             mView.ShowLoading(true, "数据加载中...");
@@ -76,7 +114,7 @@ public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
                             mView.ShowLoading(false, "");
                             isFirstIn = false;
                         }
-                        if(textJokes!=null) {
+                        if (textJokes != null) {
                             if (isRefresh) {
                                 mView.refreshData(textJokes);
                             } else {
@@ -91,5 +129,41 @@ public class ChildTextJokePresenter implements ChildTextJokeContract.Presenter {
                     }
                 });
         mRxManager.addSubscription(subscription);
+    }
+
+    /**
+     * 按时间获取textJoke
+     * @param page
+     * @param time
+     */
+    public void getTextJokeByTime(int page, String time) {
+        if (isFirstIn) {
+            mView.ShowLoading(true, "数据加载中...");
+        }
+        Subscription subscription = mModel.getTextJokeByTime(page, time)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<TextJoke>>() {
+                    @Override
+                    public void call(List<TextJoke> textJokes) {
+                        if (isFirstIn) {
+                            mView.ShowLoading(false, "");
+                            isFirstIn = false;
+                        }
+                        if (textJokes != null) {
+                            if (isRefresh) {
+                                mView.refreshData(textJokes);
+                            } else {
+                                mView.loadMoreData(textJokes);
+                            }
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        mView.ShowError(true, "请求出错！");
+                    }
+                });
+        mRxManager.addSubscription(subscription);
+
     }
 }

@@ -17,7 +17,7 @@ import butterknife.BindView;
  * Created by zyyoona7 on 2016/6/29.
  */
 
-public class ImageJokeFragment extends BaseFragment {
+public class ImageJokeFragment extends BaseFragment{
 
     @BindView(R.id.stl_image_joke)
     SmartTabLayout mStlTextJoke;
